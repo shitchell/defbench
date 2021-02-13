@@ -3,34 +3,16 @@ Run tests on methods to determine execution time
 and memory usage. Keeps a history of all tests
 run for later review and analysis.
 
-Examples:
-
+example:
+```
 import defbench
 
 def for_loop(counter=5):
   for i in range(counter):
     continue
 
-def while_loop(counter=5):
-  while counter:
-    counter -= 1
-
 f = defbench.run(for_loop)
-f_1000 = defbench.run(for_loop, repeat=1000)
-f_named = defbench.run(for_loop, name="for test")
-
-w = defbench.run(lambda: while_loop(10), repeat=500)
-
 print(f)
-print(w)
-
-total_avg = defbench.history.average_time()
-all = defbench.history.get()
-floops = defbench.history.get(lambda x: x.name.startswith("for"))
-
-print(total_avg)
-print(all)
-print(floops)
 '''
 
 import sys
@@ -42,6 +24,11 @@ from memory_profiler import memory_usage
 class TestRunningException(Exception): pass
 
 class TestRun:
+  '''
+  Represents the results after running a benchmark test. Contains information
+  about the name of the function ran, average time for completion, and average
+  memory usage.
+  '''
   _func: Callable
   _mem: List[float]
   __mem_raw: List[float]
@@ -157,6 +144,11 @@ class history:
     return history._history
 
 class Test:
+  '''
+  Class used for running tests on a function. Stores the function to use along
+  with default values for each test. Tests can be run using `.run()`, and each
+  test is available via the `.history` attribute.
+  '''
   _func: Callable
   _repeat: int
   _running: bool
