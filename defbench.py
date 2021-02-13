@@ -35,21 +35,23 @@ class TestRun:
     name: str
     time: float
     stdout: str
+    stderr: str
     repeat: int
 
-    def __init__(self, func: Callable, name: str = None, repeat: int = 1, memory: List[float] = [], time: float = 0.0, stdout: str = ""):
+    def __init__(self, func: Callable, name: str = None, repeat: int = 1, memory: List[float] = [], time: float = 0.0, stdout: str = "", stderr: str = ""):
         self._func = func
         if name:
             self.name = name
         else:
             try:
-             self.name = func.__code__.co_name
+                self.name = func.__code__.co_name
             except:
-             self.name = "<function>"
+                self.name = "<function>"
         self.repeat = repeat
         self._mem_raw = memory
         self.time = time
         self.stdout = stdout
+        self.stderr = stderr
         history.add(self)
 
     @property
@@ -94,18 +96,18 @@ class TestRun:
 
 class history:
     '''
-    Keeps a record of all TestRuns created by either the module level
-    `.run()` method or `Test.run()`. Provides methods for retrieving
-    information about previous TestRuns, optionally based on filters.
+    Keeps a record of all TestRuns created by either the module level `.run()`
+    method or `Test.run()`. Provides methods for retrieving information about
+    previous TestRuns, optionally based on filters.
     '''
     _history: List[TestRun] = []
 
     @staticmethod
     def average_time(filter: Callable = None) -> float:
         '''
-        Return the average time for all TestRuns in the history.
-        Optionally, pass a function which accepts a single argument to
-        filter results (see `.get()`)
+        Return the average time for all TestRuns in the history. Optionally,
+        pass a function which accepts a single argument to filter results
+        (see `.get()`)
         ```
         '''
         runs = history.get(filter)
@@ -115,9 +117,9 @@ class history:
     @staticmethod
     def average_memory(filter: Callable = None) -> float:
         '''
-        Return the average memory usage (MiB) for all TestRuns in the
-        history. Optionally, pass a function which accepts a single
-        argument to filter results (see `.get()`)
+        Return the average memory usage (MiB) for all TestRuns in the history.
+        Optionally, pass a function which accepts a single argument to filter
+        results (see `.get()`)
         '''
         runs = history.get(filter)
         total = sum([r.memory for r in runs])
@@ -131,8 +133,8 @@ class history:
     @staticmethod
     def get(filter: Callable = None) -> List[TestRun]:
         '''
-        Return all TestRuns from the history. Optionally, pass a 
-        function that accepts a single argument to filter results, e.g.:
+        Return all TestRuns from the history. Optionally, pass a function that
+        accepts a single argument to filter results, e.g.:
 
         ```
         history.get(lambda x: x.name.endswith('_loop'))
@@ -166,11 +168,13 @@ class Test:
         # create new test instance
         test_run = TestRun(self._func, repeat=repeat, name=name)
 
-        # we're going to temporarily disable printing to the screen...
+        # store the normal output file descriptors...
         old_stdout = sys.stdout
+        old_stderr = sys.stderr
 
-        # ...and replace the "screen" with our own variable, so all of the function output will be stored there instead of printed
+        # ...so that we can redirect all output for ourselves
         sys.stdout = StringIO()
+        sys.stderr = StringIO()
 
         # run the function
         try:
@@ -178,21 +182,23 @@ class Test:
         except Exception as e:
             # return stdout back to normal before passing the error
             sys.stdout = old_stdout
+            sys.stderr = old_stderr
             raise e
 
-        # get the function output from our fake variable
+        # get output of the function from our fake variable
         test_run.stdout = sys.stdout.getvalue()
+        test_run.stderr = sys.stderr.getvalue()
 
         # put the screen output back to normal
         sys.stdout = old_stdout
+        sys.stderr = old_stderr
 
         self.history.append(test_run)
 
     def run(self, repeat: int = 100, name: str = None) -> TestRun:
         '''
-        Run the test function `repeat` times. Returns
-        a TestRun with memory and timing information,
-        and adds the TestRun to `Test.history`.
+        Run the test function `repeat` times. Returns a TestRun with memory
+        and timing information, and adds the TestRun to `Test.history`.
         '''
         # don't run again while already running
         if self._running:
@@ -200,11 +206,6 @@ class Test:
 
         self._running = True
         mem_usage = None
-
-        # name priority:
-        # 1. passed as parameter to .run()
-        # 2. passed in to constructor
-        # 3. function name
         name = name or self.name
 
         try:
@@ -225,9 +226,9 @@ class Test:
 
 def run(func: Callable, repeat: int = 10, name: str = None) -> TestRun:
     '''
-    Run a function `repeat` times, returning a TestRun instance with
-    average time and memory usage. Also adds the TestRun to the
-    module's history for later use.
+    Run a function `repeat` times, returning a TestRun instance with average
+    time and memory usage. Also adds the TestRun to the module's history for
+    later use.
     '''
     test_run = Test(func, repeat=repeat, name=name)
     return test_run.run(repeat)
