@@ -24,6 +24,13 @@ def search_list():
 results = benchmark.run(search_list, repeat=1000)
 print(results)
 ```
+*outputs*
+```
+<TestRun 'search_list'
+  runs:     1,000
+  avg time: 0.0002124s
+  avg mem:  0.0Mib>
+```
 
 ## benchmark.run()
 this is the easiest way to use this tool. it generates a `TestRun` object, returns it, and adds it to `benchmark.history` for later review or analysis.
