@@ -113,7 +113,7 @@ class history:
   '''
   _history: List[TestRun] = []
 
-  @classmethod
+  @staticmethod
   def average_time(filter: Callable = None) -> float:
     '''
     Return the average time for all TestRuns in the history.
@@ -181,7 +181,12 @@ class Test:
     sys.stdout = StringIO()
 
     # run the function
-    test_run.time = timeit.timeit(self._func, number=repeat)
+    try:
+      test_run.time = timeit.timeit(self._func, number=repeat)
+    except Exception as e:
+      # return stdout back to normal before passing the error
+      sys.stdout = old_stdout
+      raise e
 
     # get the function output from our fake variable
     test_run.stdout = sys.stdout.getvalue()

@@ -1,7 +1,13 @@
+# python stuffs
+.pyc
+__pycache__/
+
 # mypy
 .mypy_cache
 
 # pyenv
 .python-version
 
-__pycache__/
+# package stuffs
+/dist/
+/*.egg-info
