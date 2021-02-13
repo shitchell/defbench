@@ -46,13 +46,14 @@ a `TestRun` object is returned by either `benchmark.run()` or `benchmark.Test.ru
 ### attributes
 | attribute | type | description |
 | --------- | ---- | ----------- |
-| _func     | Callable    | the benchmarked function |
 | _mem_raw  | List[float] | the raw slices of the program's memory usage (MiB) during the function call (the entire program's memory usage) |
 | _mem      | List[float] | "normalized" slices of the program's memory usage (MiB) during the function call (initial memory usage subtracted from subsequent memory usage values) |
+| func      | Callable    | the benchmarked function |
 | name      | str         | the function name *or* the name passed with `.run(func, name="foobar")` |
 | time      | float       | the average time (seconds) of all runs |
+| memory    | float       | the peak memory usage (MiB) of all runs |
 | stdout    | str         | output is suppressed by `.run()` and stored here for later retrieval |
-| repeat    | int         | number of tests to run |
+| repeat    | int         | number of tests run |
 
 ### initialization
 ```python
@@ -73,7 +74,7 @@ during a `.run()` call, all output to `sys.stdout` (e.g. `print()` statements) i
 
 ## Test
 
-a `Test` object is initialiezd with a function name and some default values. calling `Test.run()` will both add a new `TestRun` object to `Test.history` for later retrieval and return it.
+a `Test` object is initialiezd with a function name and some default values. calling `Test.run()` will add a new `TestRun` object to `Test.history` and `benchmark.history` for later retrieval and then return it.
 
 ### attributes
 | attribute | type | description |
