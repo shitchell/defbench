@@ -5,7 +5,7 @@ run for later review and analysis.
 
 Examples:
 
-import benchmark
+import benchfunc
 
 def for_loop(counter=5):
   for i in range(counter):
@@ -15,18 +15,18 @@ def while_loop(counter=5):
   while counter:
     counter -= 1
 
-f = benchmark.run(for_loop)
-f_1000 = benchmark.run(for_loop, repeat=1000)
-f_named = benchmark.run(for_loop, name="for test")
+f = benchfunc.run(for_loop)
+f_1000 = benchfunc.run(for_loop, repeat=1000)
+f_named = benchfunc.run(for_loop, name="for test")
 
-w = benchmark.run(lambda: while_loop(10), repeat=500)
+w = benchfunc.run(lambda: while_loop(10), repeat=500)
 
 print(f)
 print(w)
 
-total_avg = benchmark.history.average_time()
-all = benchmark.history.get()
-floops = benchmark.history.get(lambda x: x.name.startswith("for"))
+total_avg = benchfunc.history.average_time()
+all = benchfunc.history.get()
+floops = benchfunc.history.get(lambda x: x.name.startswith("for"))
 
 print(total_avg)
 print(all)
@@ -44,7 +44,7 @@ class TestRunningException(Exception): pass
 class TestRun:
   _func: Callable
   _mem: List[float]
-  _mem_raw: List[float]
+  __mem_raw: List[float]
   name: str
   time: float
   stdout: str
@@ -60,54 +60,50 @@ class TestRun:
       except:
        self.name = "<function>"
     self.repeat = repeat
-    self.memory = memory
+    self._mem_raw = memory
     self.time = time
     self.stdout = stdout
-  
-  # this creates a "property", which is basically 
-  # just a method that acts like an attribute. you
-  # access it with `TestRun.func`, so essentially a
-  # getter. you can still edit `TestRun._func`, but
-  # this is just an extra step to let you know that
-  # this really shouldn't be changed 
+    history.add(self)
+
   @property
-  def func(self) -> Callable:
-    return self._func
+  def _mem_raw(self) -> List[float]:
+    return self._mem_raw
+
+  @_mem_raw.setter
+  def _mem_raw(self, values: List[float]):
+    # make sure the correct type is used
+    if not isinstance(values, list):
+      raise TypeError('Memory values must be of type List[float]')
     
-  @property
-  def memory(self) -> float:
-    return max(self._mem)
-  
-  # it took me a while to realize that memory_profiler
-  # gives you the current memory usage of the *entire*
-  # program, not just the function. it simply gives you
-  # the total memory usage of the program at X
-  # intervals while the function is running. so to
-  # determine just the function's memory usage, we
-  # subtract the initial memory measurement (the total
-  # program memory usage at the time the function
-  # started) from the rest of the measurements recorded
-  # while the function was running
-  @memory.setter
-  def memory(self, values: List[float]) -> None:
     # keep a copy of the raw memory data
-    self._mem_raw = values
-    # but normalize what we'll use
+    self.__mem_raw = values
+    
+    # and normalize what we'll *actually* use
     if values:
       initial = values[0]
       self._mem = [x - initial for x in values]
     else:
       self._mem = []
+
+  @property
+  def func(self) -> Callable:
+    return self._func
+
+  @property
+  def memory(self) -> float:
+    if self._mem:
+      return max(self._mem)
+    return None
   
   def __str__(self) -> str:
     output = f"<TestRun '{self.name}'\n"
     output += f'  runs:     {self.repeat:,}\n'
     output += f'  avg time: {self.time:.4}s\n'
-    output += f'  avg mem:  {self._average_memory:.4}Mib>'
+    output += f'  avg mem:  {self.memory:.4}Mib>'
     return output
   
   def __repr__(self) -> str:
-    return f'TestRun(name="{self.name}" time={self.time:.4} mem={self.mem})'
+    return f'TestRun(name="{self.name}" time={self.time:.4} mem={self.memory})'
 
 class history:
   '''
@@ -117,6 +113,7 @@ class history:
   '''
   _history: List[TestRun] = []
 
+  @classmethod
   def average_time(filter: Callable = None) -> float:
     '''
     Return the average time for all TestRuns in the history.
@@ -127,7 +124,8 @@ class history:
     runs = history.get(filter)
     total = sum([r.time for r in runs])
     return total / len(runs)
-  
+
+  @staticmethod
   def average_memory(filter: Callable = None) -> float:
     '''
     Return the average memory usage (MiB) for all TestRuns in the
@@ -135,13 +133,15 @@ class history:
     argument to filter results (see `.get()`)
     '''
     runs = history.get(filter)
-    total = sum([r._average_memory for r in runs])
+    total = sum([r.memory for r in runs])
     return total / len(runs)
 
+  @staticmethod
   def add(run: TestRun) -> None:
     if isinstance(run, TestRun):
       history._history.append(run)
 
+  @staticmethod
   def get(filter: Callable = None) -> List[TestRun]:
     '''
     Return all TestRuns from the history. Optionally, pass a 
@@ -211,14 +211,14 @@ class Test:
     name = name or self.name
 
     try:
-      mem_usage = memory_usage((self._run, (repeat,name)))
+      mem_usage = memory_usage((self._run, (repeat,name)), interval=0.05)
     except Exception as e:
       # reset _running status before passing the error
       self._running = False
       raise e
     
     test_run = self.history[-1]
-    test_run.memory = mem_usage
+    test_run._mem_raw = mem_usage
     history.add(test_run)
     return test_run
   

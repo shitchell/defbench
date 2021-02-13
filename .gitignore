@@ -1,5 +1,7 @@
-# ignore mypy cache
+# mypy
 .mypy_cache
 
-# ignore pyenv version
+# pyenv
 .python-version
+
+__pycache__/
