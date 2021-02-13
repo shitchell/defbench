@@ -144,3 +144,4 @@ return all `TestRun` objects in history. optionally, pass a function to be used 
 - [ ] add more analysis options for items in `history`
 - [ ] capture `stderr` in `TestRun.run()`?
 - [ ] add to pip
+- [ ] add unit tests
