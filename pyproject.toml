@@ -1,6 +1,25 @@
-[build-system]
-requires = [
-    "setuptools >= 42",
-    "wheel"
+[tool.poetry]
+name = "defbench"
+version = "0.1.0"
+description = "benchmark (time + memory) individual python functions"
+authors = ["Shaun Mitchell <shaun@shitchell.com>"]
+license = "WTFPL"
+readme = "README.md"
+homepage = "https://github.com/shitchell/defbench"
+keywords = ["benchmark", "test", "time", "memory"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent"
 ]
-build-backend = "setuptools.build_meta"
+include = ["LICENSE"]
+
+
+[tool.poetry.dependencies]
+python = "^3.4"
+memory-profiler = "^0.58.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
