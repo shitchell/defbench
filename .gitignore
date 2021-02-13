@@ -10,5 +10,3 @@ __pycache__/
 
 # package stuffs
 /dist/
-/*.egg-info
-/build/
