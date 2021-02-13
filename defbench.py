@@ -5,7 +5,7 @@ run for later review and analysis.
 
 Examples:
 
-import benchfunc
+import defbench
 
 def for_loop(counter=5):
   for i in range(counter):
@@ -15,18 +15,18 @@ def while_loop(counter=5):
   while counter:
     counter -= 1
 
-f = benchfunc.run(for_loop)
-f_1000 = benchfunc.run(for_loop, repeat=1000)
-f_named = benchfunc.run(for_loop, name="for test")
+f = defbench.run(for_loop)
+f_1000 = defbench.run(for_loop, repeat=1000)
+f_named = defbench.run(for_loop, name="for test")
 
-w = benchfunc.run(lambda: while_loop(10), repeat=500)
+w = defbench.run(lambda: while_loop(10), repeat=500)
 
 print(f)
 print(w)
 
-total_avg = benchfunc.history.average_time()
-all = benchfunc.history.get()
-floops = benchfunc.history.get(lambda x: x.name.startswith("for"))
+total_avg = defbench.history.average_time()
+all = defbench.history.get()
+floops = defbench.history.get(lambda x: x.name.startswith("for"))
 
 print(total_avg)
 print(all)

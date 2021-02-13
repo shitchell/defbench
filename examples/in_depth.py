@@ -1,5 +1,5 @@
 import requests
-import benchfunc
+import defbench
 from pprint import pprint
 
 my_set = set()
@@ -47,59 +47,59 @@ def fetch_resource():
   url = 'https://raw.githubusercontent.com/dwyl/english-words/master/words.txt'
   words = requests.get(url).text
 
-fr = benchfunc.run(fetch_resource)
+fr = defbench.run(fetch_resource)
 print(fr)
 print()
 
 # first argument is the function to test,
 # second argument (optional) is number of times
 # to run the method
-ps = benchfunc.run(populate_set, repeat=10000)
+ps = defbench.run(populate_set, repeat=10000)
 print(ps)
 print()
 
 # if you want, you can name the test
-pl = benchfunc.run(populate_list, repeat=10000, name="create list[20] x10000 ")
+pl = defbench.run(populate_list, repeat=10000, name="create list[20] x10000 ")
 print(pl)
 print()
 
 # if you want to run a function with arguments,
 # create a lambda function like so:
-pl_args = benchfunc.run(lambda: populate_list(1000), repeat=100)
+pl_args = defbench.run(lambda: populate_list(1000), repeat=100)
 print(pl_args)
 print()
 
 # notice that using lambda causes the function to be
 # named "<lambda>" in the output. you can use the name
 # parameter to fix that
-pl_named = benchfunc.run(lambda: populate_list(10000), repeat=100, name="populate list[10000]")
+pl_named = defbench.run(lambda: populate_list(10000), repeat=100, name="populate list[10000]")
 print(pl_named)
 print()
 
-ps_named = benchfunc.run(lambda: populate_set(10000), repeat=100, name="populate set[10000]")
+ps_named = defbench.run(lambda: populate_set(10000), repeat=100, name="populate set[10000]")
 print(ps_named)
 print()
 
-rl_named = benchfunc.run(lambda: refill_list(10000), repeat=100, name="refill list[10000]")
+rl_named = defbench.run(lambda: refill_list(10000), repeat=100, name="refill list[10000]")
 print(rl_named)
 print()
 
-rln_named = benchfunc.run(lambda: refill_list_nocheck(10000), repeat=100, name="refill nocheck[10000]")
+rln_named = defbench.run(lambda: refill_list_nocheck(10000), repeat=100, name="refill nocheck[10000]")
 print(rln_named)
 print()
 
-ss = benchfunc.run(search_set, repeat=100)
+ss = defbench.run(search_set, repeat=100)
 print(ss)
 print()
 
-sl = benchfunc.run(search_list, repeat=100)
+sl = defbench.run(search_list, repeat=100)
 print(sl)
 print()
 
-# if your function prints output, benchfunc will
+# if your function prints output, defbench will
 # suppress it while running the test. access it
 # with the `.stdout` attribute
-pstuff = benchfunc.run(print_stuff, repeat=5)
+pstuff = defbench.run(print_stuff, repeat=5)
 print(pstuff)
 if pstuff.stdout:
   print('---stdout---')
@@ -108,8 +108,8 @@ if pstuff.stdout:
 print()
 
 # get the average time of all tests
-avg = benchfunc.history.average_time()
+avg = defbench.history.average_time()
 print(f"total avg: {avg:.5}s")
 
 # print all the tests
-pprint(benchfunc.history.get())
+pprint(defbench.history.get())

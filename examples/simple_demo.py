@@ -1,4 +1,4 @@
-import benchfunc
+import defbench
 
 my_set = set()
 my_list = list()
@@ -16,10 +16,10 @@ def search_list():
   global my_list
   return "hello" in my_list
 
-# run benchfunc tests
-ss = benchfunc.run(search_set, repeat=1000)
+# run defbench tests
+ss = defbench.run(search_set, repeat=1000)
 print(ss)
 print()
 
-sl = benchfunc.run(search_list, repeat=1000)
+sl = defbench.run(search_list, repeat=1000)
 print(sl)
