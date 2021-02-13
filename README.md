@@ -13,7 +13,7 @@ pip install -r requirements.txt
 
 1. import benchmark
 2. define a function to test
-3. use `benchmark.run(func, [repeat])`
+3. use `benchmark.run(func, [repeat], [name])`
 
 ```python
 import benchmark
