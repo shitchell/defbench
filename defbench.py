@@ -13,6 +13,7 @@ def for_loop(counter=5):
 
 f = defbench.run(for_loop)
 print(f)
+```
 '''
 
 import sys
@@ -108,7 +109,6 @@ class history:
         Return the average time for all TestRuns in the history. Optionally,
         pass a function which accepts a single argument to filter results
         (see `.get()`)
-        ```
         '''
         runs = history.get(filter)
         total = sum([r.time for r in runs])
