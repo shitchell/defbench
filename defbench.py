@@ -67,7 +67,7 @@ class TestRun:
 
   @property
   def _mem_raw(self) -> List[float]:
-    return self._mem_raw
+    return self.__mem_raw
 
   @_mem_raw.setter
   def _mem_raw(self, values: List[float]):
