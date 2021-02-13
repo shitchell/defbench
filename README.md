@@ -38,7 +38,7 @@ this is the easiest way to use this tool. it generates a `TestRun` object, retur
 ```python
 run(func: Callable, repeat: int = 10, name: str = None) -> TestRun
 ```
-pass in the function to be tested. optionally, specify the number of times to repeat the function and the name to use. if a name is not provided, it defaults to the function name ("<lambda>" for lambda functions)
+pass in the function to be tested. optionally, specify the number of times to repeat the function and the name to use. if a name is not provided, it defaults to the function name ("&lt;lambda>" for lambda functions)
 
 ## TestRun
 a `TestRun` object is returned by either `benchmark.run()` or `benchmark.Test.run()`. it contains all of the results from benchmarking a function.
@@ -96,7 +96,7 @@ priority for name/repeat values used are:
 1. value passed in to `Test.run()` or `benchmark.run()`
 2. value passed to `__init__()` (or `Test()`) during initialization
 3. (for name only) function name if neither above provided
-4. default value (if the function somehow doesn't have a name, "<function>" is used, but i've never seen this be the case and don't know if it's even possible, but it's there just in case)
+4. default value (if the function somehow doesn't have a name, "&lt;function>" is used, but i've never seen this be the case and don't know if it's even possible, but it's there just in case)
 
 ## history
 there's a history object at the module level (`benchmark.history`) that contains a history of every `TestRun` object generated through `benchmark.Test.run()` and `benchmark.run()`.
