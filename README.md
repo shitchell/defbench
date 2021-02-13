@@ -1,14 +1,12 @@
 defbench.py
 ===
 
-a python3 module for easily benchmarking the elapsed time and memory usage of python functions
+a simple python3 module for easily benchmarking the elapsed time and memory usage of python functions
 
 
 ## quick start
-make sure you have the requirements (currently just *memory-profiler*) installed:
-
 ```sh
-pip install -r requirements.txt
+pip install defbench
 ```
 
 1. import defbench
