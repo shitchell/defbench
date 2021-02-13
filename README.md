@@ -13,7 +13,7 @@ pip install -r requirements.txt
 
 1. import benchfunc
 2. define a function to test
-3. use `benchfunc.run(func, [repeat], [name])`
+3. use `benchfunc.run(func[, repeat][, name])`
 
 ```python
 import benchfunc
