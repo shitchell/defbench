@@ -1,5 +1,5 @@
 '''
-asdfRun tests on methods to determine execution time
+Run tests on methods to determine execution time
 and memory usage. Keeps a history of all tests
 run for later review and analysis.
 
